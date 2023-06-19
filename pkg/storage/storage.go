@@ -14,6 +14,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -37,10 +38,12 @@ func init() {
 	ctx = context.Background()
 	// Подключение к БД. Функция возвращает объект БД.
 	var err error
-	DB, err = pgxpool.Connect(ctx, "postgres://postgres:pass@192.168.1.35:5432/mydb")
+	DB, err = pgxpool.Connect(ctx, "postgres://postgres:Stasi123@192.168.1.35:5432/tasks")
+
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
+	fmt.Println("Connected succesfully")
 }
 
 func NewTask(id int64, opened time.Time, closed time.Time,
@@ -49,6 +52,14 @@ func NewTask(id int64, opened time.Time, closed time.Time,
 	return &Task{id, opened, closed, author_id, assigned_id, title, content}
 }
 
-func CreateTask(ctx context.Context, db *pgxpool.Pool) {
+func GetTask() string {
+	rows, _ := DB.Query(ctx, `SELECT title FROM tasks;`)
+
+	var title string
+	for rows.Next() {
+		rows.Scan(&title)
+	}
+
+	return title
 
 }
