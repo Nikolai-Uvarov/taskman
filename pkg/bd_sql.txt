@@ -1,0 +1,52 @@
+DROP TABLE IF EXISTS tasks, users, tasks_labels, labels;
+
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY, -- первичный ключ
+    name TEXT NOT NULL
+);
+
+CREATE TABLE tasks (
+    id BIGSERIAL PRIMARY KEY, -- первичный ключ
+    opened BIGINT NOT NULL,
+	closed BIGINT,
+	author_id BIGINT NOT NULL  REFERENCES users(id),
+	assigned_id BIGINT NOT NULL  REFERENCES users(id),
+    title TEXT NOT NULL,
+	content TEXT
+);
+
+CREATE TABLE labels (
+    id BIGSERIAL PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+CREATE TABLE tasks_labels (
+    task_id BIGINT REFERENCES tasks(id),    
+    label_id BIGINT REFERENCES labels(id)
+);
+
+
+
+
+-- Очистка всех таблиц перед наполнением тестовыми данными.
+TRUNCATE TABLE tasks, users, tasks_labels, labels;
+
+-- Наполнение таблиц тестовыми данными.
+INSERT INTO labels(name) VALUES
+    ('Проект'), ('Продукт'), ('Support');
+	
+INSERT INTO users(name) VALUES
+('Ivan Petrov'), 
+('Petr Ivanov'),
+('Ivan Sidorov'),
+('Maria Krasotkina');
+
+INSERT INTO tasks(opened, closed, author_id, assigned_id, title, content) VALUES
+    (1687180040, 1687180520, 1, 4, 'Сделать кофе', 'Мне как обычно, спасибо'),
+    (1687180530, NULL, 1, 3, 'Квартальный план', 'Быстро, на'),
+    (1687180550, NULL, 3, 2, 'Code review', 'Code review - вчерашние пулл-реквесты'),
+    (1687180530, 1687180570, 2, 4, 'Шаблон плана', 'Пришли плиз шаблон квартального плана'),
+    (1687180550, NULL, 3, 2, 'Баг фикс', 'Пофиксить 500 на проде');
+
+INSERT INTO tasks_labels(task_id, label_id) VALUES
+    (1, 3), (2, 2), (3, 1), (4, 2), (5, 1);
