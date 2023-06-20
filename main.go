@@ -6,7 +6,10 @@ import (
 )
 
 func main() {
-	fmt.Println(storage.GetTask())
-	fmt.Println("OK")
+
+	tasks, _ := storage.GetTasks()
+
+	fmt.Println((tasks[0]).Opened)
+
 	storage.DB.Close()
 }
