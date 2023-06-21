@@ -84,7 +84,25 @@ func GetTasks() ([]Task, error) {
 		return nil, err
 	}
 
-	var tasks []Task
+	return parseTasks(rows)
+}
+
+func GetTasksByAuthor(id int64) ([]Task, error) {
+
+	rows, err := DB.Query(ctx, `SELECT * FROM tasks WHERE author_id=($1) ORDER BY id;`, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return parseTasks(rows)
+}
+
+func parseTasks(rows interface {
+	Next() bool
+	Scan(dest ...interface{}) error
+	Err() error
+}) (tasks []Task, err error) {
 
 	for rows.Next() {
 		var t Task

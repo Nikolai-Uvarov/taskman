@@ -7,13 +7,15 @@ import (
 
 func main() {
 
-	//tasks, _ := storage.GetTasks()
-
+	//tasks, _ := storage.GetTasksByAuthor(1)
+	tasks, _ := storage.GetTasks()
 	//fmt.Println((tasks[0]).Opened)
 
-	_, err := storage.NewTask(1, 2, "New task", "test new task from golang code")
+	//_, err := storage.NewTask(1, 2, "New task", "test new task from golang code")
 
-	fmt.Println(err)
+	for _, t := range tasks {
+		fmt.Println(t.Id, t.Title, t.Author_id)
+	}
 
 	storage.DB.Close()
 }
