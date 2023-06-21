@@ -143,3 +143,22 @@ func parseTasks(rows interface {
 	// ВАЖНО не забыть проверить rows.Err()
 	return tasks, rows.Err()
 }
+
+func UpdateTask(id int64, opened time.Time, closed time.Time,
+	author_id int64, assigned_id int64, title string, content string) (*Task, error) {
+
+	_, err := DB.Exec(ctx,
+		`UPDATE tasks
+		SET opened = ($1), closed = ($2), 
+		author_id = ($3), assigned_id=($4), 
+		title = ($5),content = ($6)
+		WHERE id = ($7);`,
+		opened.Unix(), closed.Unix(),
+		author_id, assigned_id, title, content, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &Task{id, opened, closed, author_id, assigned_id, title, content}, nil
+}
