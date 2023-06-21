@@ -46,10 +46,34 @@ func init() {
 	}
 }
 
-func NewTask(id int64, opened time.Time, closed time.Time,
-	author_id int64, assigned_id int64, title string, content string) *Task {
+func NewTask(author_id int64, assigned_id int64, title string, content string) (*Task, error) {
 
-	return &Task{id, opened, closed, author_id, assigned_id, title, content}
+	o := time.Now()
+
+	rows, err := DB.Query(ctx,
+		`INSERT INTO tasks(opened,author_id, assigned_id, title,content) 
+		VALUES (($1), ($2), ($3), ($4),($5)) 
+		RETURNING id;`,
+		o.Unix(), author_id, assigned_id, title, content)
+
+	if err != nil {
+		return nil, err
+	}
+
+	//получаем из БД id созданной задачи
+	var id []int64
+	for rows.Next() {
+
+		var ci int64
+		err = rows.Scan(&ci)
+
+		if err != nil {
+			return nil, err
+		}
+		id = append(id, ci)
+	}
+
+	return &Task{id[0], o, time.Unix(0, 0), author_id, assigned_id, title, content}, rows.Err()
 }
 
 func GetTasks() ([]Task, error) {
