@@ -98,6 +98,21 @@ func GetTasksByAuthor(id int64) ([]Task, error) {
 	return parseTasks(rows)
 }
 
+func GetTasksByTag(tag string) ([]Task, error) {
+
+	rows, err := DB.Query(ctx,
+		`SELECT t.* FROM tasks t
+		JOIN tasks_labels tl ON t.id = tl.task_id
+		JOIN labels l ON l.id = tl.label_id
+		WHERE l.name = ($1);`, tag)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return parseTasks(rows)
+}
+
 func parseTasks(rows interface {
 	Next() bool
 	Scan(dest ...interface{}) error

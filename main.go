@@ -8,8 +8,9 @@ import (
 func main() {
 
 	//tasks, _ := storage.GetTasksByAuthor(1)
-	tasks, _ := storage.GetTasks()
+	//tasks, _ := storage.GetTasks()
 	//fmt.Println((tasks[0]).Opened)
+	tasks, _ := storage.GetTasksByTag("Продукт")
 
 	//_, err := storage.NewTask(1, 2, "New task", "test new task from golang code")
 
