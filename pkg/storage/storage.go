@@ -162,3 +162,26 @@ func UpdateTask(id int64, opened time.Time, closed time.Time,
 
 	return &Task{id, opened, closed, author_id, assigned_id, title, content}, nil
 }
+
+func DeleteTask(id int64) error {
+
+	tx, err := DB.Begin(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback(ctx)
+
+	_, err = tx.Exec(ctx, `DELETE FROM tasks_labels WHERE task_id = ($1); `, id)
+
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(ctx, `DELETE FROM tasks WHERE id = ($1); `, id)
+
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit(ctx)
+}
